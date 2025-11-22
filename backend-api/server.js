@@ -1,4 +1,3 @@
-// clean placeholder backend
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -10,9 +9,6 @@ import scannerRoute from "./routes/scanner.js";
 import systemRoute from "./routes/system.js";
 
 const app = express();
-import scannerRouter from "./routes/scanner.js";
-
-app.use("/api/scanner", scannerRouter);
 
 const PORT = process.env.PORT || config.get("port");
 const API_KEY = config.get("apiKey");
