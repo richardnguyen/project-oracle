@@ -31,3 +31,7 @@ class SignalEngine {
 const signalEngine = new SignalEngine();
 export default signalEngine;
 
+import signalEngine from "./signalEngine.js";
+
+// Register subscribers
+scannerEngine.subscribe((data) => signalEngine.processScannerUpdate(data));
