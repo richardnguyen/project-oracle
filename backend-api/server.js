@@ -11,7 +11,7 @@ import systemRoute from "./routes/system.js";
 const app = express();
 
 const PORT = process.env.PORT || config.get("port");
-const API_KEY = config.get("apiKey");
+const API_KEY = process.env.API_KEY;   // <--- updated!
 
 // -------- MIDDLEWARE --------
 app.use(express.json());
