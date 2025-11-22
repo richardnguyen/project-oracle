@@ -1,6 +1,6 @@
 {
-  "apiKey": "winning",
-  "port": 10000,
+  "port": 3000,
+  "apiKey": "f36e0973a5ba290a8fec40d01229266d",
   "logLevel": "dev"
 }
 
