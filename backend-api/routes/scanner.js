@@ -1,18 +1,20 @@
 import express from "express";
-const router = express.Router();
+import scannerEngine from "../core/scannerEngine.js";
 
-let scannerState = {};
+const router = express.Router();
 
 // POST /api/scanner/state
 router.post("/state", (req, res) => {
-  scannerState = req.body;
-  res.json({ success: true });
+  const result = scannerEngine.handleScannerUpdate(req.body);
+  res.json(result);
 });
 
 // GET /api/scanner/state
 router.get("/state", (req, res) => {
-  res.json(scannerState);
+  res.json({
+    success: true,
+    state: scannerEngine.state,
+  });
 });
 
 export default router;
-
