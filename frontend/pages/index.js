@@ -19,9 +19,6 @@ import {
 // API base URL (your Render backend)
 const API_BASE = "https://project-oracle-tvha.onrender.com/api";
 
-// You will expose NEXT_PUBLIC_API_KEY in frontend to allow client-side requests
-const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
-
 export default function Dashboard() {
   const [signals, setSignals] = useState([]);
   const [scannerState, setScannerState] = useState(null);
@@ -31,25 +28,24 @@ export default function Dashboard() {
 
   async function fetchData() {
     try {
-      const headers = { "x-api-key": API_KEY };
-
       const [sigRes, scanRes, sysRes] = await Promise.all([
-        fetch(`${API_BASE}/signals`, { headers }),
-        fetch(`${API_BASE}/scanner/state`, { headers }),
-        fetch(`${API_BASE}/system/state`, { headers }),
+        fetch(`${API_BASE}/signals`),
+        fetch(`${API_BASE}/scanner/state`),
+        fetch(`${API_BASE}/system/state`),
       ]);
 
       if (!sigRes.ok || !scanRes.ok || !sysRes.ok) {
-        throw new Error("Invalid API response (check API_KEY)");
+        throw new Error("Invalid API response");
       }
 
       const sigData = await sigRes.json();
       const scanData = await scanRes.json();
       const sysData = await sysRes.json();
 
-      setSignals(sigData.signals || []);
-      setScannerState(scanData.state || {});
-      setSystemState(sysData.system || {});
+      // Some endpoints might return arrays directly
+      setSignals(sigData.signals || sigData);
+      setScannerState(scanData.state || scanData.scanner || scanData);
+      setSystemState(sysData.system || sysData);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -60,7 +56,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 8000); // auto refresh every 8 seconds
+    const interval = setInterval(fetchData, 8000);
     return () => clearInterval(interval);
   }, []);
 
@@ -73,7 +69,7 @@ export default function Dashboard() {
       </AppBar>
 
       <Container maxWidth="lg" style={{ marginTop: "2rem" }}>
-        {loading && <CircularProgress />}
+        {loading && <CircularProgress />} 
         {error && <Alert severity="error">{error}</Alert>}
 
         <Grid container spacing={3}>
@@ -83,7 +79,7 @@ export default function Dashboard() {
               <CardContent>
                 <Typography variant="h5">System Status</Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Scanner: {systemState?.scanner ? "Active" : "No data"}
+                  Scanner: {systemState?.scanner ? JSON.stringify(systemState.scanner) : "No data"}
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   Last Update: {systemState?.lastUpdate || "N/A"}
@@ -97,7 +93,7 @@ export default function Dashboard() {
             <Card>
               <CardContent>
                 <Typography variant="h5">Scanner State</Typography>
-                <pre>{JSON.stringify(scannerState, null, 2)}</pre>
+                <pre>{scannerState ? JSON.stringify(scannerState, null, 2) : "No scanner data"}</pre>
               </CardContent>
             </Card>
           </Grid>
@@ -107,8 +103,7 @@ export default function Dashboard() {
             <Card>
               <CardContent>
                 <Typography variant="h5">Signals</Typography>
-
-                {signals.length === 0 ? (
+                {(!signals || signals.length === 0) ? (
                   <Typography>No signals found</Typography>
                 ) : (
                   <Table>
@@ -138,4 +133,3 @@ export default function Dashboard() {
     </>
   );
 }
-// clean placeholder frontend
