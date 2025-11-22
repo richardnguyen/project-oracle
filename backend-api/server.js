@@ -11,22 +11,12 @@ import systemRoute from "./routes/system.js";
 const app = express();
 
 const PORT = process.env.PORT || config.get("port");
-const API_KEY = process.env.API_KEY;   // <--- updated!
 
 // -------- MIDDLEWARE --------
 app.use(express.json());
 app.use(cors());
 app.use(helmet());
 app.use(morgan(config.get("logLevel")));
-
-// -------- API KEY CHECK --------
-app.use((req, res, next) => {
-  const key = req.headers["x-api-key"];
-  if (!key || key !== API_KEY) {
-    return res.status(401).json({ error: "Unauthorized - invalid API key" });
-  }
-  next();
-});
 
 // -------- ROUTES --------
 app.use("/api/signals", signalsRoute);
