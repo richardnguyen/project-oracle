@@ -1,1 +1,6 @@
-{ "env": "local" }
+{
+  "apiKey": "winning",
+  "port": 10000,
+  "logLevel": "dev"
+}
+
